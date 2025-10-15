@@ -6,6 +6,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -39,7 +40,7 @@ public class TaskModel {
   @Column(name = "due_date")
   private Date dueDate;
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "project_id", nullable = false)
   private ProjectModel project;
 
@@ -60,55 +61,62 @@ public class TaskModel {
     return id;
   }
 
-  public void setId(Long id) {
+  public TaskModel setId(Long id) {
     this.id = id;
+    return this;
   }
 
   public String getTitle() {
     return title;
   }
 
-  public void setTitle(String title) {
+  public TaskModel setTitle(String title) {
     this.title = title;
+    return this;
   }
 
   public String getDescription() {
     return description;
   }
 
-  public void setDescription(String description) {
+  public TaskModel setDescription(String description) {
     this.description = description;
+    return this;
   }
 
   public StatusTask getStatus() {
     return status;
   }
 
-  public void setStatus(StatusTask status) {
+  public TaskModel setStatus(StatusTask status) {
     this.status = status;
+    return this;
   }
 
   public PriorityTask getPriority() {
     return priority;
   }
 
-  public void setPriority(PriorityTask priority) {
+  public TaskModel setPriority(PriorityTask priority) {
     this.priority = priority;
+    return this;
   }
 
   public Date getDueDate() {
     return dueDate;
   }
 
-  public void setDueDate(Date dueDate) {
+  public TaskModel setDueDate(Date dueDate) {
     this.dueDate = dueDate;
+    return this;
   }
 
   public ProjectModel getProject() {
     return project;
   }
 
-  public void setProject(ProjectModel project) {
+  public TaskModel setProject(ProjectModel project) {
     this.project = project;
+    return this;
   }
 }
