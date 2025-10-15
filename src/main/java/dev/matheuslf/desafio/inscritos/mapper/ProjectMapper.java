@@ -6,6 +6,8 @@ import dev.matheuslf.desafio.inscritos.model.ProjectModel;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 public class ProjectMapper {
 
@@ -26,5 +28,17 @@ public class ProjectMapper {
         projectModel.getStartDate(),
         projectModel.getEndDate()
     );
+  }
+
+  public List<ResponseProject> toResponseProject(List<ProjectModel> projectList) {
+    return projectList.stream()
+        .map(projectModel -> new ResponseProject(
+            projectModel.getId(),
+            projectModel.getName(),
+            projectModel.getDescription(),
+            projectModel.getStartDate(),
+            projectModel.getEndDate()
+        ))
+        .toList();
   }
 }

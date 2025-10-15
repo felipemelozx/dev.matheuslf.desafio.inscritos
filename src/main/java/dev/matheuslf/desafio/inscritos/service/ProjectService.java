@@ -9,6 +9,8 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class ProjectService {
 
@@ -25,5 +27,10 @@ public class ProjectService {
     ProjectModel project = projectMapper.toProjectModel(requestBody);
     ProjectModel projectSave = projectRepository.save(project);
     return projectMapper.toResponseProject(projectSave);
+  }
+
+  public List<ResponseProject> getAllProjects() {
+    List<ProjectModel> projectModelList = projectRepository.findAll();
+    return projectMapper.toResponseProject(projectModelList);
   }
 }
