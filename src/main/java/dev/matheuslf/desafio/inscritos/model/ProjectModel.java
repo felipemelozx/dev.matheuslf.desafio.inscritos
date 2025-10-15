@@ -44,39 +44,44 @@ public class ProjectModel {
     return id;
   }
 
-  public void setId(Long id) {
+  public ProjectModel setId(Long id) {
     this.id = id;
+    return this;
   }
 
   public String getName() {
     return name;
   }
 
-  public void setName(String name) {
+  public ProjectModel setName(String name) {
     this.name = name;
+    return this;
   }
 
   public String getDescription() {
     return description;
   }
 
-  public void setDescription(String description) {
+  public ProjectModel setDescription(String description) {
     this.description = description;
+    return this;
   }
 
   public Date getStartDate() {
     return startDate;
   }
 
-  public void setStartDate(Date startDate) {
+  public ProjectModel setStartDate(Date startDate) {
     this.startDate = startDate;
+    return this;
   }
 
   public Date getEndDate() {
     return endDate;
   }
 
-  public void setEndDate(Date endDate) {
+  public ProjectModel setEndDate(Date endDate) {
     this.endDate = endDate;
+    return this;
   }
 }
