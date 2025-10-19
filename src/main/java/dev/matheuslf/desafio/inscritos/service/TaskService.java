@@ -43,9 +43,7 @@ public class TaskService {
 
   public List<ResponseTask> findTasks(StatusTask status, PriorityTask priority, Long projectId) {
     if (status == null && priority == null && projectId == null) {
-      return taskRepository.findAll().stream()
-          .map(taskMapper::toResponseTask)
-          .toList();
+      return  taskMapper.toResponseTask(taskRepository.findAll());
     }
    return taskMapper.toResponseTask(taskRepository.findAllByFilter(status, priority, projectId));
   }

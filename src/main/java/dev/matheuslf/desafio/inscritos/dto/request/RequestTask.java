@@ -1,6 +1,7 @@
 package dev.matheuslf.desafio.inscritos.dto.request;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import dev.matheuslf.desafio.inscritos.enums.PriorityTask;
 import dev.matheuslf.desafio.inscritos.enums.StatusTask;
 import jakarta.validation.constraints.NotBlank;
@@ -24,7 +25,6 @@ public record RequestTask(
     @NotNull(message = "A prioridade é obrigatória")
     PriorityTask priority,
 
-    @FutureOrPresent(message = "A data limite deve ser futura ou o dia atual")
     Date dueDate,
 
     @NotNull(message = "O ID do projeto é obrigatório")

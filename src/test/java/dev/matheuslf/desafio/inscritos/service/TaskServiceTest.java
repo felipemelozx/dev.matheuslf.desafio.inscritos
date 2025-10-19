@@ -84,6 +84,7 @@ class TaskServiceTest {
     assertEquals(StatusTask.DONE, result.status());
     verify(taskRepository).save(existingTask);
   }
+
   @Test
   void shouldReturnAllTasksWhenNoFilters() {
     ProjectModel project = new ProjectModel(1L, "Projeto A", "Desc", null, null);
@@ -94,8 +95,7 @@ class TaskServiceTest {
     ResponseTask response2 = new ResponseTask(2L, "Tarefa 2", "Desc", 1L, StatusTask.DOING, PriorityTask.LOW, null);
 
     when(taskRepository.findAll()).thenReturn(List.of(task1, task2));
-    when(taskMapper.toResponseTask(task1)).thenReturn(response1);
-    when(taskMapper.toResponseTask(task2)).thenReturn(response2);
+    when(taskMapper.toResponseTask(List.of(task1, task2))).thenReturn(List.of(response1, response2));
 
     List<ResponseTask> results = taskService.findTasks(null, null, null);
 
@@ -103,8 +103,7 @@ class TaskServiceTest {
     assertTrue(results.contains(response1));
     assertTrue(results.contains(response2));
     verify(taskRepository, times(1)).findAll();
-    verify(taskMapper, times(1)).toResponseTask(task1);
-    verify(taskMapper, times(1)).toResponseTask(task2);
+    verify(taskMapper, times(1)).toResponseTask(List.of(task1, task2));
   }
 
   @Test
@@ -123,6 +122,40 @@ class TaskServiceTest {
     assertEquals(1, results.size());
     assertEquals(response1, results.get(0));
     verify(taskRepository, times(1)).findAllByFilter(StatusTask.TODO, PriorityTask.HIGH, 1L);
+    verify(taskMapper, times(1)).toResponseTask(List.of(task1));
+  }
+
+  @Test
+  void shouldReturnTasksWithOnlyProjectFilter() {
+    ProjectModel project = new ProjectModel(1L, "Projeto A", "Desc", null, null);
+    TaskModel task1 = new TaskModel(1L, "Tarefa 3", "Desc", StatusTask.TODO, PriorityTask.HIGH, null, project);
+    ResponseTask response1 = new ResponseTask(1L, "Tarefa 3", "Desc", 1L, StatusTask.TODO, PriorityTask.HIGH, null);
+
+    when(taskRepository.findAllByFilter(null, null, 1L)).thenReturn(List.of(task1));
+    when(taskMapper.toResponseTask(List.of(task1))).thenReturn(List.of(response1));
+
+    List<ResponseTask> results = taskService.findTasks(null, null, 1L);
+
+    assertEquals(1, results.size());
+    assertEquals(response1, results.get(0));
+    verify(taskRepository, times(1)).findAllByFilter(null, null, 1L);
+    verify(taskMapper, times(1)).toResponseTask(List.of(task1));
+  }
+
+  @Test
+  void shouldReturnTasksWithOnlyPriorityFilter() {
+    ProjectModel project = new ProjectModel(1L, "Projeto A", "Desc", null, null);
+    TaskModel task1 = new TaskModel(1L, "Tarefa 3", "Desc", StatusTask.TODO, PriorityTask.HIGH, null, project);
+    ResponseTask response1 = new ResponseTask(1L, "Tarefa 3", "Desc", 1L, StatusTask.TODO, PriorityTask.HIGH, null);
+
+    when(taskRepository.findAllByFilter(null, PriorityTask.HIGH, null)).thenReturn(List.of(task1));
+    when(taskMapper.toResponseTask(List.of(task1))).thenReturn(List.of(response1));
+
+    List<ResponseTask> results = taskService.findTasks(null, PriorityTask.HIGH, null);
+
+    assertEquals(1, results.size());
+    assertEquals(response1, results.get(0));
+    verify(taskRepository, times(1)).findAllByFilter(null, PriorityTask.HIGH,null);
     verify(taskMapper, times(1)).toResponseTask(List.of(task1));
   }
 }
