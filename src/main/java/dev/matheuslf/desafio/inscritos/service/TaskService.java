@@ -31,4 +31,8 @@ public class TaskService {
     TaskModel taskSave = taskRepository.save(task);
     return taskMapper.toResponseTask(taskSave);
   }
+
+  public void deleteById(Long taskId) {
+    taskRepository.deleteById(taskId);
+  }
 }
