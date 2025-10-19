@@ -3,6 +3,7 @@ package dev.matheuslf.desafio.inscritos.controller;
 import dev.matheuslf.desafio.inscritos.dto.request.RequestProject;
 import dev.matheuslf.desafio.inscritos.dto.response.ResponseProject;
 import dev.matheuslf.desafio.inscritos.service.ProjectService;
+import dev.matheuslf.desafio.inscritos.utils.ApiResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,15 +25,22 @@ public class ProjectController {
   }
 
   @PostMapping
-  public ResponseEntity<ResponseProject> create(@RequestBody @Valid RequestProject requestBody){
-    ResponseProject body = projectService.create(requestBody);
+  public ResponseEntity<ApiResponse<ResponseProject>> create(@RequestBody @Valid RequestProject requestBody){
+    ResponseProject data = projectService.create(requestBody);
+    var body = ApiResponse.<ResponseProject>success()
+        .message("Projeto criado com sucesso")
+        .data(data)
+        .build();
     return ResponseEntity.ok().body(body);
   }
 
   @GetMapping
-  public ResponseEntity<List<ResponseProject>> getAllProjects(){
-    List<ResponseProject> response = projectService.getAllProjects();
-    return ResponseEntity.ok().body(response);
+  public ResponseEntity<ApiResponse<List<ResponseProject>>> getAllProjects(){
+    List<ResponseProject> data = projectService.getAllProjects();
+    var body = ApiResponse.<List<ResponseProject>>success()
+        .message("Sucesso ao buscar todos os projetos")
+        .data(data)
+        .build();
+    return ResponseEntity.ok().body(body);
   }
-
 }

@@ -6,6 +6,7 @@ import dev.matheuslf.desafio.inscritos.dto.response.ResponseTask;
 import dev.matheuslf.desafio.inscritos.enums.PriorityTask;
 import dev.matheuslf.desafio.inscritos.enums.StatusTask;
 import dev.matheuslf.desafio.inscritos.service.TaskService;
+import dev.matheuslf.desafio.inscritos.utils.ApiResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -31,29 +32,41 @@ public class TaskController {
   }
 
   @PostMapping
-  public ResponseEntity<ResponseTask> create(@RequestBody @Valid RequestTask requestTask){
-    ResponseTask task = taskService.create(requestTask);
-    return ResponseEntity.ok().body(task);
+  public ResponseEntity<ApiResponse<ResponseTask>> create(@RequestBody @Valid RequestTask requestTask){
+    ResponseTask data = taskService.create(requestTask);
+    var body = ApiResponse.<ResponseTask>success()
+        .message("Task criada com sucesso")
+        .data(data)
+        .build();
+    return ResponseEntity.ok().body(body);
   }
 
   @GetMapping
-  public ResponseEntity<List<ResponseTask>> getTasks(
+  public ResponseEntity<ApiResponse<List<ResponseTask>>> getTasks(
       @RequestParam(required = false) StatusTask status,
       @RequestParam(required = false) PriorityTask priority,
       @RequestParam(required = false) Long projectId) {
 
-    var body = taskService.findTasks(status, priority, projectId);
+    var data = taskService.findTasks(status, priority, projectId);
+    var body = ApiResponse.<List<ResponseTask>>success()
+        .message("Sucesso ao buscar todas as Tasks")
+        .data(data)
+        .build();
     return ResponseEntity.ok().body(body);
   }
 
   @PutMapping("/{taskId}/status")
-  public ResponseEntity<ResponseTask> updateStatus(@PathVariable
+  public ResponseEntity<ApiResponse<ResponseTask>> updateStatus(@PathVariable
                                            Long taskId,
-                                           @RequestBody
+                                                                @RequestBody
                                            RequestUpdateTaskStatus status) {
 
-    var response = taskService.updateStatus(taskId, status);
-    return ResponseEntity.ok().body(response);
+    var data = taskService.updateStatus(taskId, status);
+    var body = ApiResponse.<ResponseTask>success()
+        .message("Atualização realizada com sucesso")
+        .data(data)
+        .build();
+    return ResponseEntity.ok().body(body);
   }
 
   @DeleteMapping("/{taskId}")

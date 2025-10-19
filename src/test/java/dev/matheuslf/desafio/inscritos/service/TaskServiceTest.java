@@ -73,7 +73,7 @@ class TaskServiceTest {
   void shouldUpdateTaskStatus() {
     TaskModel existingTask = new TaskModel(1L, "Tarefa 1", "Desc", StatusTask.TODO, PriorityTask.HIGH, null, null);
     TaskModel updatedTask = new TaskModel(1L, "Tarefa 1", "Desc", StatusTask.DONE, PriorityTask.HIGH, null, null);
-    ResponseTask response = new ResponseTask(1L, "Tarefa 1", "Desc", 1L,StatusTask.DONE, PriorityTask.HIGH, null);
+    ResponseTask response = new ResponseTask(1L, "Tarefa 1", "Desc", 1L, StatusTask.DONE, PriorityTask.HIGH, null);
 
     when(taskRepository.findById(1L)).thenReturn(Optional.of(existingTask));
     when(taskRepository.save(existingTask.setStatus(StatusTask.DONE))).thenReturn(updatedTask);
@@ -155,7 +155,7 @@ class TaskServiceTest {
 
     assertEquals(1, results.size());
     assertEquals(response1, results.get(0));
-    verify(taskRepository, times(1)).findAllByFilter(null, PriorityTask.HIGH,null);
+    verify(taskRepository, times(1)).findAllByFilter(null, PriorityTask.HIGH, null);
     verify(taskMapper, times(1)).toResponseTask(List.of(task1));
   }
 }

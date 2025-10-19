@@ -58,6 +58,37 @@ class TaskControllerIntegrationTest {
   }
 
   @Test
+  void shouldReturnBadRequestWhenBodyIsMissing() throws Exception {
+    mockMvc.perform(put("/tasks/1/status")
+            .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.success").value(false))
+        .andExpect(jsonPath("$.message").value("Required request body is missing"));
+  }
+
+  @Test
+  void shouldReturnNotFoundWhenProjectNotFound() throws Exception {
+    RequestTask request = new RequestTask(
+        "Tarefa 1",
+        "Descrição tarefa",
+        StatusTask.TODO,
+        PriorityTask.HIGH,
+        new Date(),
+        9999L
+    );
+
+    mockMvc.perform(post("/tasks")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(request)))
+        .andExpect(status().isNotFound())
+        .andExpect(jsonPath("$.success").value(false))
+        .andExpect(jsonPath("$.message").value("Projeto não encontrado"))
+        .andExpect(jsonPath("$.data").isEmpty())
+        .andExpect(jsonPath("$.errors").isEmpty())
+        .andExpect(jsonPath("$.timestamp").exists());
+  }
+
+  @Test
   void shouldCreateTaskSuccessfully() throws Exception {
 
     RequestTask request = new RequestTask(
@@ -73,10 +104,12 @@ class TaskControllerIntegrationTest {
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(request)))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.title").value("Tarefa 1"))
-        .andExpect(jsonPath("$.projectId").value(project.getId()))
-        .andExpect(jsonPath("$.status").value("TODO"))
-        .andExpect(jsonPath("$.priority").value("HIGH"));
+        .andExpect(jsonPath("$.success").value(true))
+        .andExpect(jsonPath("$.message").value("Task criada com sucesso"))
+        .andExpect(jsonPath("$.data.title").value("Tarefa 1"))
+        .andExpect(jsonPath("$.data.projectId").value(project.getId()))
+        .andExpect(jsonPath("$.data.status").value("TODO"))
+        .andExpect(jsonPath("$.data.priority").value("HIGH"));
   }
 
   @Test
@@ -101,9 +134,9 @@ class TaskControllerIntegrationTest {
 
     mockMvc.perform(get("/tasks"))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.length()", is(2)))
-        .andExpect(jsonPath("$[0].title", is("Tarefa 1")))
-        .andExpect(jsonPath("$[1].title", is("Tarefa 2")));
+        .andExpect(jsonPath("$.data.length()", is(2)))
+        .andExpect(jsonPath("$.data[0].title", is("Tarefa 1")))
+        .andExpect(jsonPath("$.data[1].title", is("Tarefa 2")));
   }
 
   @Test
@@ -123,8 +156,8 @@ class TaskControllerIntegrationTest {
             .param("priority", "HIGH")
             .param("projectId", project.getId().toString()))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.length()", is(1)))
-        .andExpect(jsonPath("$[0].title", is("Tarefa Filtrada")));
+        .andExpect(jsonPath("$.data.length()", is(1)))
+        .andExpect(jsonPath("$.data[0].title", is("Tarefa Filtrada")));
   }
 
   @Test
@@ -145,7 +178,7 @@ class TaskControllerIntegrationTest {
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(updateStatus)))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.status", is("DONE")));
+        .andExpect(jsonPath("$.data.status", is("DONE")));
   }
 
   @Test
