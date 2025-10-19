@@ -1,6 +1,7 @@
 package dev.matheuslf.desafio.inscritos.controller;
 
 import dev.matheuslf.desafio.inscritos.dto.request.RequestTask;
+import dev.matheuslf.desafio.inscritos.dto.request.RequestUpdateTaskStatus;
 import dev.matheuslf.desafio.inscritos.dto.response.ResponseTask;
 import dev.matheuslf.desafio.inscritos.enums.PriorityTask;
 import dev.matheuslf.desafio.inscritos.enums.StatusTask;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -42,6 +44,16 @@ public class TaskController {
 
     var body = taskService.findTasks(status, priority, projectId);
     return ResponseEntity.ok().body(body);
+  }
+
+  @PutMapping("/{taskId}/status")
+  public ResponseEntity<ResponseTask> updateStatus(@PathVariable
+                                           Long taskId,
+                                           @RequestBody
+                                           RequestUpdateTaskStatus status) {
+
+    var response = taskService.updateStatus(taskId, status);
+    return ResponseEntity.ok().body(response);
   }
 
   @DeleteMapping("/{taskId}")

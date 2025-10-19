@@ -1,6 +1,7 @@
 package dev.matheuslf.desafio.inscritos.service;
 
 import dev.matheuslf.desafio.inscritos.dto.request.RequestTask;
+import dev.matheuslf.desafio.inscritos.dto.request.RequestUpdateTaskStatus;
 import dev.matheuslf.desafio.inscritos.dto.response.ResponseTask;
 import dev.matheuslf.desafio.inscritos.enums.PriorityTask;
 import dev.matheuslf.desafio.inscritos.enums.StatusTask;
@@ -10,7 +11,6 @@ import dev.matheuslf.desafio.inscritos.repository.ProjectRepository;
 import dev.matheuslf.desafio.inscritos.repository.TaskRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -48,5 +48,12 @@ public class TaskService {
           .toList();
     }
    return taskMapper.toResponseTask(taskRepository.findAllByFilter(status, priority, projectId));
+  }
+
+  public ResponseTask updateStatus(Long taskId, RequestUpdateTaskStatus status) {
+    TaskModel taskModel = taskRepository.findById(taskId)
+        .orElseThrow(() -> new EntityNotFoundException("Task not found."));
+
+    return taskMapper.toResponseTask(taskRepository.save(taskModel.setStatus(status.newStatus())));
   }
 }
