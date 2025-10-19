@@ -7,6 +7,8 @@ import dev.matheuslf.desafio.inscritos.model.TaskModel;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 public class TaskMapper {
   public TaskModel toTaskModel(@Valid RequestTask requestTask) {
@@ -30,5 +32,19 @@ public class TaskMapper {
         task.getPriority(),
         task.getDueDate()
     );
+  }
+
+  public List<ResponseTask> toResponseTask(List<TaskModel> ListTask) {
+    return ListTask.stream()
+        .map(task -> new ResponseTask(
+            task.getId(),
+            task.getTitle(),
+            task.getDescription(),
+            task.getProject().getId(),
+            task.getStatus(),
+            task.getPriority(),
+            task.getDueDate()
+          ))
+        .toList();
   }
 }

@@ -2,13 +2,18 @@ package dev.matheuslf.desafio.inscritos.service;
 
 import dev.matheuslf.desafio.inscritos.dto.request.RequestTask;
 import dev.matheuslf.desafio.inscritos.dto.response.ResponseTask;
+import dev.matheuslf.desafio.inscritos.enums.PriorityTask;
+import dev.matheuslf.desafio.inscritos.enums.StatusTask;
 import dev.matheuslf.desafio.inscritos.mapper.TaskMapper;
 import dev.matheuslf.desafio.inscritos.model.TaskModel;
 import dev.matheuslf.desafio.inscritos.repository.ProjectRepository;
 import dev.matheuslf.desafio.inscritos.repository.TaskRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class TaskService {
@@ -34,5 +39,14 @@ public class TaskService {
 
   public void deleteById(Long taskId) {
     taskRepository.deleteById(taskId);
+  }
+
+  public List<ResponseTask> findTasks(StatusTask status, PriorityTask priority, Long projectId) {
+    if (status == null && priority == null && projectId == null) {
+      return taskRepository.findAll().stream()
+          .map(taskMapper::toResponseTask)
+          .toList();
+    }
+   return taskMapper.toResponseTask(taskRepository.findAllByFilter(status, priority, projectId));
   }
 }
