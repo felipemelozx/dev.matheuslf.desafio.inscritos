@@ -1,90 +1,77 @@
-## 🧠 Desafio Técnico – Sistema de Gestão de Projetos e Demandas
-
-### 📘 Contexto
-Sua missão é desenvolver uma **API RESTful em Java com Spring Boot** para gerenciar **projetos e tarefas (demandas)** de uma empresa.  
-O sistema será utilizado por um time de desenvolvimento para organizar suas entregas, acompanhar o status das tarefas e realizar análises simples.
+# Desafio Técnico – Sistema de Gestão de Projetos e Demandas
 
 ---
 
-## 🎯 Requisitos Técnicos
+Este projeto é a resolução do desafio proposto pelo professor do professor [Matheus Leandro](https://github.com/matheuslf) disponível neste [repositório](https://github.com/matheuslf/dev.matheuslf.desafio.inscritos).
 
-### 🧱 1. Modelagem de Domínio
-
-A modelagem pode ser modificada pelo inscrito. Porém, precisa ser justificado o motivo.
-
-#### `Project`
-| Campo | Tipo | Descrição |
-|-------|------|-----------|
-| `id` | UUID/Long | Identificador |
-| `name` | String (3–100) | **Obrigatório** |
-| `description` | String | Opcional |
-| `startDate` | Date | Início do projeto |
-| `endDate` | Date | Opcional |
-
-#### `Task`
-| Campo | Tipo | Descrição |
-|-------|------|-----------|
-| `id` | UUID/Long | Identificador |
-| `title` | String (5–150) | **Obrigatório** |
-| `description` | String | Detalhes da tarefa |
-| `status` | Enum | TODO / DOING / DONE |
-| `priority` | Enum | LOW / MEDIUM / HIGH |
-| `dueDate` | Date | Data limite |
-| `projectId` | FK(Project) | Relacionamento |
+# Tecnologias Utilizadas
 
 ---
 
-### 🌐 2. Endpoints REST
+- Java 17+
+- Spring Boot 3.5.6
+- Spring Security
+- Auth0 (JWT)
+- Spring Data JPA
+- Flyway (migrações de banco)
+- PostgreSQL
+- H2 Database (para testes)
+- Spring Validation
+- Spring Web
+- Swagger / OpenAPI (springdoc-openapi)
 
-| Método | Endpoint | Descrição |
-|---------|-----------|-----------|
-| **POST** | `/projects` | Criar novo projeto (`name` obrigatório) |
-| **GET** | `/projects` | Listar todos os projetos (paginação opcional) |
-| **POST** | `/tasks` | Criar nova tarefa vinculada a um projeto |
-| **GET** | `/tasks?status=&priority=&projectId=` | Buscar tarefas com filtros opcionais |
-| **PUT** | `/tasks/{id}/status` | Atualizar apenas o status da tarefa |
-| **DELETE** | `/tasks/{id}` | Remover tarefa |
-
----
-
-## ✅ Requisitos Obrigatórios
-- 🧑‍💻 **Java 17+** e **Spring Boot 3+**  
-- 🧠 **Spring Data JPA**  
-- 🗄️ Banco Relacional (**PostgreSQL** ou **H2**)  
-- ✔️ **Bean Validation**  
-- 🧪 **Testes Automatizados**  
-  - Unitários (Services mockados)  
-  - Integração (Controllers com MockMvc ou Testcontainers)  
-- ⚠️ Tratamento de erros com `@ControllerAdvice`  
-- 📦 Uso de **DTOs** (`record` ou classes simples)  
-- 📘 **README** explicando como rodar o projeto
+# Como usar
 
 ---
 
-## 🏅 Diferenciais (Pontos Extras)
-- 🧭 Documentação **Swagger / OpenAPI**  
-- 🔐 Autenticação simples com **JWT** ou Basic Auth  
-- 🐳 Configuração de **Docker** / **docker-compose**  
-- ⚡ Uso de **MapStruct** para mapeamento de DTOs  
-- 🔍 Testes de API com **RestAssured**
+## Pré-requisitos
+- Java 17+
+- Maven 3.9+
+- PostgreSQL (rodando localmente)
+- docker compose
 
 ---
 
-## 🛠️ Tags
-`#Java` `#SpringBoot` `#Backend` `#DesafioTecnico`  
-`#API` `#RestAPI` `#Docker` `#Kubernetes`  
-`#PostgreSQL` `#Oracle` `#JPA` `#Swagger`  
-`#RestAssured` `#CleanCode` `#SoftwareEngineering`
+## Clonando o Projeto
+
+```bash
+git clone https://github.com/matheuslf/dev.matheuslf.desafio.inscritos
+cd dev.matheuslf.desafio.inscritos
+```
+
+## Rode o docker compose
+```bash
+docker compose up -d
+```
+
+## Rode o projeto
+```bash
+mvn spring-boot:run
+```
+
+## Documentação da API
 
 ---
 
-### 💡 Dica
-> Foque em **organização, boas práticas e clareza do código**.  
-> Um bom README e commits bem descritos também serão avaliados. 😉
+Esta API possui documentação interativa via Swagger.
+
+- **Swagger UI:** [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)
+
+### Endpoints principais
 
 ---
 
-### 🧾 Licença
-Este projeto foi desenvolvido exclusivamente para o **processo seletivo SIS Innov & Tech** e não deve ser utilizado para fins comerciais.
+#### Autenticação
+- `POST /auth/register` – Registrar novo usuário
+- `POST /auth/login` – Fazer login e obter token JWT
 
----
+#### Projetos
+- `GET /projects` – Listar projetos
+- `POST /projects` – Criar novo projeto
+
+#### Tarefas
+- `GET /tasks` – Listar tarefas
+- `POST /tasks` – Criar nova tarefa
+- `PUT /tasks/{id}/status` – Atualizar status da tarefa
+- `DELETE /tasks/{id}` – Excluir tarefa
+
