@@ -23,7 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-class ProjectControllerIntegrationTest {
+class ProjectControllerIntegrationTest extends BaseIntegrationTest {
 
   @Autowired
   private MockMvc mockMvc;
@@ -33,6 +33,9 @@ class ProjectControllerIntegrationTest {
 
   @Autowired
   private ProjectRepository projectRepository;
+
+  @Autowired
+  private AuthController authController;
 
   @BeforeEach
   void setup() {
@@ -45,7 +48,8 @@ class ProjectControllerIntegrationTest {
 
     mockMvc.perform(post("/projects")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(request)))
+            .content(objectMapper.writeValueAsString(request))
+            .header("Authorization","Bearer " + accessToken))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.data.name").value("Projeto Teste"))
         .andExpect(jsonPath("$.data.description").value("Descrição Teste"))
@@ -61,7 +65,8 @@ class ProjectControllerIntegrationTest {
         .setEndDate(new Date());
     projectRepository.save(project);
 
-    mockMvc.perform(get("/projects"))
+    mockMvc.perform(get("/projects")
+            .header("Authorization","Bearer " + accessToken))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.data.length()").value(1))
         .andExpect(jsonPath("$.data[0].name").value("Projeto 1"));
@@ -69,7 +74,8 @@ class ProjectControllerIntegrationTest {
 
   @Test
   void shouldReturnEmptyListWhenNoProjects() throws Exception {
-    mockMvc.perform(get("/projects"))
+    mockMvc.perform(get("/projects")
+            .header("Authorization","Bearer " + accessToken))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.data.length()", is(0)));
   }
@@ -80,7 +86,8 @@ class ProjectControllerIntegrationTest {
 
     mockMvc.perform(post("/projects")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(request)))
+            .content(objectMapper.writeValueAsString(request))
+            .header("Authorization","Bearer " + accessToken))
         .andExpect(status().isBadRequest());
   }
 
@@ -90,7 +97,8 @@ class ProjectControllerIntegrationTest {
 
     mockMvc.perform(post("/projects")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(request)))
+            .content(objectMapper.writeValueAsString(request))
+            .header("Authorization","Bearer " + accessToken))
         .andExpect(status().isOk());
   }
 }

@@ -28,7 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-class TaskControllerIntegrationTest {
+class TaskControllerIntegrationTest extends BaseIntegrationTest{
 
   @Autowired
   private MockMvc mockMvc;
@@ -60,10 +60,11 @@ class TaskControllerIntegrationTest {
   @Test
   void shouldReturnBadRequestWhenBodyIsMissing() throws Exception {
     mockMvc.perform(put("/tasks/1/status")
-            .contentType(MediaType.APPLICATION_JSON))
+            .contentType(MediaType.APPLICATION_JSON)
+            .header("Authorization","Bearer " + accessToken))
         .andExpect(status().isBadRequest())
         .andExpect(jsonPath("$.success").value(false))
-        .andExpect(jsonPath("$.message").value("Required request body is missing"));
+        .andExpect(jsonPath("$.message").value("Invalid or missing request body"));
   }
 
   @Test
@@ -79,7 +80,8 @@ class TaskControllerIntegrationTest {
 
     mockMvc.perform(post("/tasks")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(request)))
+            .content(objectMapper.writeValueAsString(request))
+            .header("Authorization","Bearer " + accessToken))
         .andExpect(status().isNotFound())
         .andExpect(jsonPath("$.success").value(false))
         .andExpect(jsonPath("$.message").value("Projeto não encontrado"))
@@ -102,7 +104,8 @@ class TaskControllerIntegrationTest {
 
     mockMvc.perform(post("/tasks")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(request)))
+            .content(objectMapper.writeValueAsString(request))
+            .header("Authorization","Bearer " + accessToken))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.success").value(true))
         .andExpect(jsonPath("$.message").value("Task criada com sucesso"))
@@ -132,7 +135,8 @@ class TaskControllerIntegrationTest {
     taskRepository.save(task1);
     taskRepository.save(task2);
 
-    mockMvc.perform(get("/tasks"))
+    mockMvc.perform(get("/tasks")
+            .header("Authorization","Bearer " + accessToken))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.data.length()", is(2)))
         .andExpect(jsonPath("$.data[0].title", is("Tarefa 1")))
@@ -154,7 +158,8 @@ class TaskControllerIntegrationTest {
     mockMvc.perform(get("/tasks")
             .param("status", "TODO")
             .param("priority", "HIGH")
-            .param("projectId", project.getId().toString()))
+            .param("projectId", project.getId().toString())
+            .header("Authorization","Bearer " + accessToken))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.data.length()", is(1)))
         .andExpect(jsonPath("$.data[0].title", is("Tarefa Filtrada")));
@@ -176,7 +181,8 @@ class TaskControllerIntegrationTest {
 
     mockMvc.perform(put("/tasks/{taskId}/status", task.getId())
             .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(updateStatus)))
+            .content(objectMapper.writeValueAsString(updateStatus))
+            .header("Authorization","Bearer " + accessToken))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.data.status", is("DONE")));
   }
@@ -193,7 +199,8 @@ class TaskControllerIntegrationTest {
 
     task = taskRepository.save(task);
 
-    mockMvc.perform(delete("/tasks/{taskId}", task.getId()))
+    mockMvc.perform(delete("/tasks/{taskId}", task.getId())
+            .header("Authorization","Bearer " + accessToken))
         .andExpect(status().isNoContent());
   }
 }
