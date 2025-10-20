@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.matheuslf.desafio.inscritos.dto.request.RequestProject;
 import dev.matheuslf.desafio.inscritos.model.ProjectModel;
 import dev.matheuslf.desafio.inscritos.repository.ProjectRepository;
+import dev.matheuslf.desafio.inscritos.repository.TaskRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,8 +38,12 @@ class ProjectControllerIntegrationTest extends BaseIntegrationTest {
   @Autowired
   private AuthController authController;
 
+  @Autowired
+  private TaskRepository taskRepository;
+
   @BeforeEach
   void setup() {
+    taskRepository.deleteAll();
     projectRepository.deleteAll();
   }
 
