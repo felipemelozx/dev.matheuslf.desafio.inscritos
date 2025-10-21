@@ -2,10 +2,12 @@ package dev.matheuslf.desafio.inscritos.controller;
 
 import dev.matheuslf.desafio.inscritos.dto.request.RequestProject;
 import dev.matheuslf.desafio.inscritos.dto.response.ResponseProject;
+import dev.matheuslf.desafio.inscritos.model.UserModel;
 import dev.matheuslf.desafio.inscritos.service.ProjectService;
 import dev.matheuslf.desafio.inscritos.utils.ApiResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,8 +27,9 @@ public class ProjectController {
   }
 
   @PostMapping
-  public ResponseEntity<ApiResponse<ResponseProject>> create(@RequestBody @Valid RequestProject requestBody){
-    ResponseProject data = projectService.create(requestBody);
+  public ResponseEntity<ApiResponse<ResponseProject>> create(@RequestBody @Valid RequestProject requestBody,
+                                                             @AuthenticationPrincipal UserModel user){
+    ResponseProject data = projectService.create(requestBody, user);
     var body = ApiResponse.<ResponseProject>success()
         .message("Projeto criado com sucesso")
         .data(data)

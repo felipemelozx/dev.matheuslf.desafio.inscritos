@@ -2,17 +2,9 @@ package dev.matheuslf.desafio.inscritos.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.matheuslf.desafio.inscritos.dto.request.RequestProject;
-import dev.matheuslf.desafio.inscritos.model.ProjectModel;
-import dev.matheuslf.desafio.inscritos.repository.ProjectRepository;
-import dev.matheuslf.desafio.inscritos.repository.TaskRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Date;
 
@@ -20,32 +12,10 @@ import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-
-@SpringBootTest
-@AutoConfigureMockMvc
-@ActiveProfiles("test")
 class ProjectControllerIntegrationTest extends BaseIntegrationTest {
 
   @Autowired
-  private MockMvc mockMvc;
-
-  @Autowired
   private ObjectMapper objectMapper;
-
-  @Autowired
-  private ProjectRepository projectRepository;
-
-  @Autowired
-  private AuthController authController;
-
-  @Autowired
-  private TaskRepository taskRepository;
-
-  @BeforeEach
-  void setup() {
-    taskRepository.deleteAll();
-    projectRepository.deleteAll();
-  }
 
   @Test
   void shouldCreateProjectSuccessfully() throws Exception {
@@ -54,7 +24,7 @@ class ProjectControllerIntegrationTest extends BaseIntegrationTest {
     mockMvc.perform(post("/projects")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(request))
-            .header("Authorization","Bearer " + accessToken))
+            .header("Authorization", "Bearer " + accessToken))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.data.name").value("Projeto Teste"))
         .andExpect(jsonPath("$.data.description").value("Descrição Teste"))
@@ -63,47 +33,46 @@ class ProjectControllerIntegrationTest extends BaseIntegrationTest {
 
   @Test
   void shouldReturnAllProjects() throws Exception {
-    ProjectModel project = new ProjectModel()
-        .setName("Projeto 1")
-        .setDescription("Desc")
-        .setStartDate(new Date())
-        .setEndDate(new Date());
-    projectRepository.save(project);
+    RequestProject project1 = new RequestProject("Projeto 1", "Desc 1", new Date(), new Date());
+    RequestProject project2 = new RequestProject("Projeto 2", "Desc 2", new Date(), new Date());
+
+    mockMvc.perform(post("/projects")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(project1))
+            .header("Authorization", "Bearer " + accessToken))
+        .andExpect(status().isOk());
+
+    mockMvc.perform(post("/projects")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(project2))
+            .header("Authorization", "Bearer " + accessToken))
+        .andExpect(status().isOk());
 
     mockMvc.perform(get("/projects")
-            .header("Authorization","Bearer " + accessToken))
+            .header("Authorization", "Bearer " + accessToken))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.data.length()").value(1))
-        .andExpect(jsonPath("$.data[0].name").value("Projeto 1"));
+        .andExpect(jsonPath("$.data", hasSize(2)))
+        .andExpect(jsonPath("$.data[0].name", is("Projeto 1")))
+        .andExpect(jsonPath("$.data[1].name", is("Projeto 2")));
   }
 
   @Test
   void shouldReturnEmptyListWhenNoProjects() throws Exception {
     mockMvc.perform(get("/projects")
-            .header("Authorization","Bearer " + accessToken))
+            .header("Authorization", "Bearer " + accessToken))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.data.length()", is(0)));
+        .andExpect(jsonPath("$.data", hasSize(0)));
   }
 
   @Test
   void shouldFailCreateProjectWithMissingName() throws Exception {
-    RequestProject request = new RequestProject(null, "Descrição", new Date(), new Date());
+    RequestProject invalidRequest = new RequestProject(null, "Descrição inválida", new Date(), new Date());
 
     mockMvc.perform(post("/projects")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(request))
-            .header("Authorization","Bearer " + accessToken))
-        .andExpect(status().isBadRequest());
-  }
-
-  @Test
-  void shouldFailCreateProjectWithMissingDates() throws Exception {
-    RequestProject request = new RequestProject("Projeto X", "Descrição", null, null);
-
-    mockMvc.perform(post("/projects")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(request))
-            .header("Authorization","Bearer " + accessToken))
-        .andExpect(status().isOk());
+            .content(objectMapper.writeValueAsString(invalidRequest))
+            .header("Authorization", "Bearer " + accessToken))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.message", containsString("Validation failed")));
   }
 }

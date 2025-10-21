@@ -4,6 +4,7 @@ import dev.matheuslf.desafio.inscritos.dto.request.RequestProject;
 import dev.matheuslf.desafio.inscritos.dto.response.ResponseProject;
 import dev.matheuslf.desafio.inscritos.mapper.ProjectMapper;
 import dev.matheuslf.desafio.inscritos.model.ProjectModel;
+import dev.matheuslf.desafio.inscritos.model.UserModel;
 import dev.matheuslf.desafio.inscritos.repository.ProjectRepository;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -23,8 +24,8 @@ public class ProjectService {
   }
 
   @Transactional
-  public ResponseProject create(@Valid RequestProject requestBody) {
-    ProjectModel project = projectMapper.toProjectModel(requestBody);
+  public ResponseProject create(@Valid RequestProject requestBody, UserModel user) {
+    ProjectModel project = projectMapper.toProjectModel(requestBody, user);
     ProjectModel projectSave = projectRepository.save(project);
     return projectMapper.toResponseProject(projectSave);
   }

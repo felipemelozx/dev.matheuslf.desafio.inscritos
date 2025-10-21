@@ -1,0 +1,2 @@
+ALTER TABLE tb_project
+ADD COLUMN created_by INT REFERENCES tb_user(id) ON DELETE CASCADE;

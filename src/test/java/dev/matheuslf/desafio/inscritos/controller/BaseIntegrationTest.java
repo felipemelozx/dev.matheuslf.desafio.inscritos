@@ -3,6 +3,8 @@ package dev.matheuslf.desafio.inscritos.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.matheuslf.desafio.inscritos.dto.request.RequestLogin;
 import dev.matheuslf.desafio.inscritos.dto.request.RequestUser;
+import dev.matheuslf.desafio.inscritos.repository.ProjectRepository;
+import dev.matheuslf.desafio.inscritos.repository.TaskRepository;
 import dev.matheuslf.desafio.inscritos.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,38 +22,41 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("test")
 public abstract class BaseIntegrationTest {
 
-    @Autowired
-    protected MockMvc mockMvc;
+  @Autowired
+  protected MockMvc mockMvc;
+  @Autowired
+  protected ObjectMapper objectMapper;
+  @Autowired
+  protected UserRepository userRepository;
+  @Autowired
+  protected ProjectRepository projectRepository;
+  @Autowired
+  protected TaskRepository taskRepository;
 
-    @Autowired
-    protected ObjectMapper objectMapper;
+  protected String accessToken;
+  protected RequestUser userTest;
 
-    @Autowired
-    protected UserRepository userRepository;
+  @BeforeEach
+  void setupUserAndToken() throws Exception {
+    taskRepository.deleteAll();
+    projectRepository.deleteAll();
+    userRepository.deleteAll();
 
-    protected String accessToken;
+    userTest = new RequestUser("Integration Test User", "integration@test.com", "Password123!");
 
-    protected RequestUser userTest;
+    mockMvc.perform(post("/auth/register")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(userTest)))
+        .andExpect(status().isOk());
 
-    @BeforeEach
-    void setupUserAndToken() throws Exception {
-        userRepository.deleteAll();
+    RequestLogin loginRequest = new RequestLogin(userTest.email(), userTest.password());
+    var loginResult = mockMvc.perform(post("/auth/login")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(loginRequest)))
+        .andExpect(status().isOk())
+        .andReturn();
 
-        userTest = new RequestUser("Integration Test User", "integration@test.com", "Password123!");
-
-        mockMvc.perform(post("/auth/register")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(userTest)))
-                .andExpect(status().isOk());
-
-        RequestLogin loginRequest = new RequestLogin(userTest.email(), userTest.password());
-        var loginResult = mockMvc.perform(post("/auth/login")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(loginRequest)))
-                .andExpect(status().isOk())
-                .andReturn();
-
-        var jsonResponse = objectMapper.readTree(loginResult.getResponse().getContentAsString());
-        accessToken = jsonResponse.get("data").get("accessToken").asText();
-    }
+    var jsonResponse = objectMapper.readTree(loginResult.getResponse().getContentAsString());
+    accessToken = jsonResponse.get("data").get("accessToken").asText();
+  }
 }
