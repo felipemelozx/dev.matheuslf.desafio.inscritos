@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import javax.security.auth.login.CredentialException;
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 
 @ControllerAdvice
@@ -91,5 +92,16 @@ public class ControllerExceptionHandler {
         .build();
 
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
+  }
+
+  @ExceptionHandler(AccessDeniedException.class)
+  public ResponseEntity<ApiResponse<Void>> handleAccessDeniedException(AccessDeniedException ex) {
+    ApiResponse<Void> response = ApiResponse.<Void>failure()
+        .message(ex.getMessage() != null ? ex.getMessage() : "Access denied.")
+        .build();
+
+    return ResponseEntity
+        .status(HttpStatus.FORBIDDEN)
+        .body(response);
   }
 }

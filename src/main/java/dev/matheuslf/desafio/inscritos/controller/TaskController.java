@@ -5,10 +5,12 @@ import dev.matheuslf.desafio.inscritos.dto.request.RequestUpdateTaskStatus;
 import dev.matheuslf.desafio.inscritos.dto.response.ResponseTask;
 import dev.matheuslf.desafio.inscritos.enums.PriorityTask;
 import dev.matheuslf.desafio.inscritos.enums.StatusTask;
+import dev.matheuslf.desafio.inscritos.model.UserModel;
 import dev.matheuslf.desafio.inscritos.service.TaskService;
 import dev.matheuslf.desafio.inscritos.utils.ApiResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 
 @RestController
@@ -32,8 +35,9 @@ public class TaskController {
   }
 
   @PostMapping
-  public ResponseEntity<ApiResponse<ResponseTask>> create(@RequestBody @Valid RequestTask requestTask){
-    ResponseTask data = taskService.create(requestTask);
+  public ResponseEntity<ApiResponse<ResponseTask>> create(@RequestBody @Valid RequestTask requestTask,
+                                                          @AuthenticationPrincipal UserModel user) throws AccessDeniedException {
+    ResponseTask data = taskService.create(requestTask, user);
     var body = ApiResponse.<ResponseTask>success()
         .message("Task criada com sucesso")
         .data(data)
@@ -56,12 +60,11 @@ public class TaskController {
   }
 
   @PutMapping("/{taskId}/status")
-  public ResponseEntity<ApiResponse<ResponseTask>> updateStatus(@PathVariable
-                                           Long taskId,
-                                                                @RequestBody
-                                           RequestUpdateTaskStatus status) {
+  public ResponseEntity<ApiResponse<ResponseTask>> updateStatus(@PathVariable Long taskId,
+                                                                @RequestBody RequestUpdateTaskStatus status,
+                                                                @AuthenticationPrincipal UserModel currentUser) throws AccessDeniedException {
 
-    var data = taskService.updateStatus(taskId, status);
+    var data = taskService.updateStatus(taskId, status, currentUser);
     var body = ApiResponse.<ResponseTask>success()
         .message("Atualização realizada com sucesso")
         .data(data)
@@ -70,8 +73,9 @@ public class TaskController {
   }
 
   @DeleteMapping("/{taskId}")
-  public ResponseEntity<Void> deleteById(@PathVariable Long taskId) {
-    taskService.deleteById(taskId);
+  public ResponseEntity<Void> deleteById(@PathVariable Long taskId,
+                                         @AuthenticationPrincipal UserModel currentUser) throws AccessDeniedException {
+    taskService.deleteById(taskId, currentUser);
     return ResponseEntity.noContent().build();
   }
 }

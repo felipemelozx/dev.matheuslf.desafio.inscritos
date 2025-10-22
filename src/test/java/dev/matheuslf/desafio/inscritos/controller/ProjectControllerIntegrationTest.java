@@ -33,6 +33,7 @@ class ProjectControllerIntegrationTest extends BaseIntegrationTest {
 
   @Test
   void shouldReturnAllProjects() throws Exception {
+    projectRepository.deleteAll();
     RequestProject project1 = new RequestProject("Projeto 1", "Desc 1", new Date(), new Date());
     RequestProject project2 = new RequestProject("Projeto 2", "Desc 2", new Date(), new Date());
 
@@ -58,6 +59,7 @@ class ProjectControllerIntegrationTest extends BaseIntegrationTest {
 
   @Test
   void shouldReturnEmptyListWhenNoProjects() throws Exception {
+    projectRepository.deleteAll();
     mockMvc.perform(get("/projects")
             .header("Authorization", "Bearer " + accessToken))
         .andExpect(status().isOk())

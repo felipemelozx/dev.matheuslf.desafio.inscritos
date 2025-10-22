@@ -11,5 +11,7 @@ public record ResponseTask(Long taskId,
                            Long projectId,
                            StatusTask status,
                            PriorityTask priority,
+                           Long createdByUserId,
+                           Long assignedByUserId,
                            Date dueDate) {
 }

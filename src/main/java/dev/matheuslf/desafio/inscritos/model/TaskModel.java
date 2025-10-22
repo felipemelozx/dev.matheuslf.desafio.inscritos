@@ -44,6 +44,14 @@ public class TaskModel {
   @JoinColumn(name = "project_id", nullable = false)
   private ProjectModel project;
 
+  @ManyToOne
+  @JoinColumn(name = "created_by")
+  private UserModel createdBy;
+
+  @ManyToOne
+  @JoinColumn(name = "assignee_id")
+  private UserModel assignee;
+
   public TaskModel() {
   }
 
@@ -55,6 +63,30 @@ public class TaskModel {
     this.priority = priority;
     this.dueDate = dueDate;
     this.project = project;
+  }
+
+  public TaskModel(Long id, String title, String description, StatusTask status, PriorityTask priority, Date dueDate, ProjectModel project, UserModel createdBy, UserModel assignee) {
+    this(id, title, description, status, priority, dueDate, project);
+    this.createdBy = createdBy;
+    this.assignee = assignee;
+  }
+
+  public UserModel getAssignee() {
+    return assignee;
+  }
+
+  public TaskModel setAssignee(UserModel assignee) {
+    this.assignee = assignee;
+    return this;
+  }
+
+  public UserModel getCreatedBy() {
+    return createdBy;
+  }
+
+  public TaskModel setCreatedBy(UserModel createdBy) {
+    this.createdBy = createdBy;
+    return this;
   }
 
   public Long getId() {

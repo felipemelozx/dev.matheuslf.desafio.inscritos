@@ -6,6 +6,7 @@ import dev.matheuslf.desafio.inscritos.enums.PriorityTask;
 import dev.matheuslf.desafio.inscritos.enums.StatusTask;
 import dev.matheuslf.desafio.inscritos.model.ProjectModel;
 import dev.matheuslf.desafio.inscritos.model.TaskModel;
+import dev.matheuslf.desafio.inscritos.model.UserModel;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -25,9 +26,9 @@ class TaskMapperTest {
 
     @Test
     void shouldMapRequestTaskToTaskModel() {
-        RequestTask request = new RequestTask("Tarefa 1", "Desc", StatusTask.TODO, PriorityTask.HIGH, new Date(), 1L);
+        RequestTask request = new RequestTask("Tarefa 1", "Desc", StatusTask.TODO, PriorityTask.HIGH, new Date(), 1L, 1l);
 
-        TaskModel taskModel = taskMapper.toTaskModel(request);
+        TaskModel taskModel = taskMapper.toTaskModel(request, new UserModel(), new UserModel());
 
         assertNull(taskModel.getId());
         assertEquals("Tarefa 1", taskModel.getTitle());
@@ -41,7 +42,9 @@ class TaskMapperTest {
     @Test
     void shouldMapTaskModelToResponseTask() {
         ProjectModel project = new ProjectModel().setId(1L);
-        TaskModel taskModel = new TaskModel(2L, "Tarefa 1", "Desc", StatusTask.TODO, PriorityTask.HIGH, new Date(), project);
+      UserModel user = new UserModel().setId(1l);
+
+        TaskModel taskModel = new TaskModel(2L, "Tarefa 1", "Desc", StatusTask.TODO, PriorityTask.HIGH, new Date(), project, user, user);
 
         ResponseTask response = taskMapper.toResponseTask(taskModel);
 
@@ -57,8 +60,9 @@ class TaskMapperTest {
     @Test
     void shouldMapListOfTaskModelToResponseTaskList() {
         ProjectModel project = new ProjectModel().setId(1L);
-        TaskModel task1 = new TaskModel(1L, "Tarefa 1", "Desc", StatusTask.TODO, PriorityTask.HIGH, new Date(), project);
-        TaskModel task2 = new TaskModel(2L, "Tarefa 2", "Desc 2", StatusTask.DOING, PriorityTask.LOW, new Date(), project);
+        UserModel user = new UserModel().setId(1l);
+        TaskModel task1 = new TaskModel(1L, "Tarefa 1", "Desc", StatusTask.TODO, PriorityTask.HIGH, new Date(), project, user, user);
+        TaskModel task2 = new TaskModel(2L, "Tarefa 2", "Desc 2", StatusTask.DOING, PriorityTask.LOW, new Date(), project, user, user);
 
         List<ResponseTask> responses = taskMapper.toResponseTask(List.of(task1, task2));
 

@@ -1,0 +1,3 @@
+ALTER TABLE tb_task
+ADD COLUMN created_by INT REFERENCES tb_user(id) ON DELETE CASCADE,
+ADD COLUMN assignee_id INT REFERENCES tb_user(id) ON DELETE SET NULL;
