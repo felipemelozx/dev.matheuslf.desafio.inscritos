@@ -1,0 +1,16 @@
+# Ignorar pasta de build e arquivos temporários
+target/
+*.log
+
+# Git
+.git
+.gitignore
+
+# Configurações e documentação
+*.md
+*.iml
+.idea/
+.vscode/
+
+# Outros arquivos desnecessários
+.DS_Store
