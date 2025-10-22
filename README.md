@@ -20,9 +20,22 @@ Este projeto é a resolução do desafio proposto pelo professor do professor [M
 - Spring Web
 - Swagger / OpenAPI (springdoc-openapi)
 
-# Como usar
-
 ---
+
+## Documentação da API
+
+Esta aplicação possui uma **documentação interativa** disponível via Swagger, que pode ser acessada diretamente pela web, sem necessidade de instalar ou rodar a aplicação localmente.
+
+## Swagger UI (Web)
+[https://dev-matheuslf-desafio-inscritos.onrender.com/swagger-ui/index.html](https://dev-matheuslf-desafio-inscritos.onrender.com/swagger-ui/index.html)
+
+> ⚠️ Ao acessar o link, o serviço pode demorar um pouco para iniciar. Por favor, aguarde alguns instantes até que a documentação esteja totalmente carregada.
+
+## Swagger UI (Local)
+Caso você esteja rodando a aplicação localmente, a documentação estará disponível em:  
+[http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)
+
+# Como usar local
 
 ## Pré-requisitos
 - Java 17+
@@ -49,13 +62,6 @@ docker compose up -d
 mvn spring-boot:run
 ```
 
-## Documentação da API
-
----
-
-Esta API possui documentação interativa via Swagger.
-
-- **Swagger UI:** [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)
 
 ### Endpoints principais
 
